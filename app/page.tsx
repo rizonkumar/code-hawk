@@ -1,3 +1,14 @@
-export default function Home() {
-  return <div className="flex flex-col items-center">This is test</div>;
+import { Button } from "@/components/ui/button";
+import Logout from "@/module/auth/components/logout";
+import { requireAuth } from "@/module/auth/utils/auth-utils";
+
+export default async function Home() {
+  await requireAuth();
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <Logout>
+        <Button>Logout</Button>
+      </Logout>
+    </div>
+  );
 }
