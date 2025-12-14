@@ -46,7 +46,6 @@ export const AppSidebar = () => {
 
   useEffect(() => {
     setMounted(true);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
   }, []);
 
   const navigationItems = [
@@ -110,24 +109,22 @@ export const AppSidebar = () => {
   const userImage = user.image;
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border bg-sidebar/50 backdrop-blur supports-[backdrop-filter]:bg-sidebar/30">
+    <Sidebar className="bg-background border-r border-border">
+      <SidebarHeader className="border-b border-border">
         <div className="flex items-center gap-4 px-2 py-6">
           <div className="flex items-center justify-center size-12 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium shadow-sm">
             <GithubIcon className="size-6" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-sidebar-foreground">
-              Code Hawk
-            </p>
-            <p className="text-xs text-sidebar-foreground/70">
+            <p className="text-sm font-semibold text-foreground">Code Hawk</p>
+            <p className="text-xs text-muted-foreground">
               Code Review Assistant
             </p>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-sidebar/30">
+      <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -137,7 +134,7 @@ export const AppSidebar = () => {
                     asChild
                     isActive={isActive(item.href)}
                     tooltip={item.title}
-                    className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                    className="hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
                   >
                     <a href={item.href}>
                       {item.icon}
@@ -151,33 +148,33 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-sidebar-border bg-sidebar/50 backdrop-blur supports-[backdrop-filter]:bg-sidebar/30">
+      <SidebarFooter className="border-t border-border">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  className="hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
                 >
-                  <Avatar className="h-8 w-8 rounded-lg ring-2 ring-sidebar-border">
+                  <Avatar className="h-8 w-8 rounded-lg ring-2 ring-border">
                     <AvatarImage src={userImage || undefined} alt={userName} />
-                    <AvatarFallback className="rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
+                    <AvatarFallback className="rounded-lg bg-accent text-accent-foreground">
                       {userInitial}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold text-sidebar-foreground">
+                    <span className="truncate font-semibold text-foreground">
                       {userName}
                     </span>
-                    <span className="truncate text-xs text-sidebar-foreground/70">
+                    <span className="truncate text-xs text-muted-foreground">
                       {userEmail}
                     </span>
                   </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg border-border bg-popover text-popover-foreground shadow-lg"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg border-border bg-card text-card-foreground shadow-lg"
                 side="bottom"
                 align="end"
                 sideOffset={4}

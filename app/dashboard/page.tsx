@@ -22,17 +22,15 @@ import {
 const MainPage = () => {
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
       <div className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight text-foreground">
           Welcome back! 👋
         </h2>
         <p className="text-muted-foreground">
-          Here's what's happening with your repositories today.
+          Here&apos;s what&apos;s happening with your repositories today.
         </p>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-border/40 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -87,9 +85,7 @@ const MainPage = () => {
         </Card>
       </div>
 
-      {/* Recent Activity & Quick Actions */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Recent Activity */}
         <Card className="md:col-span-2 border-border/40 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -161,7 +157,6 @@ const MainPage = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
         <Card className="border-border/40 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -203,7 +198,6 @@ const MainPage = () => {
         </Card>
       </div>
 
-      {/* Repository Health Overview */}
       <Card className="border-border/40 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
         <CardHeader>
           <CardTitle>Repository Health Overview</CardTitle>
