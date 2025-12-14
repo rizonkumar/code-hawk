@@ -40,83 +40,76 @@ import Logout from "@/module/auth/components/logout";
 export const AppSidebar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const pathName = usePathname();
-
+  const pathname = usePathname();
   const { data: session } = useSession();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  if (!mounted || !session) return null;
+
   const navigationItems = [
     {
       title: "Dashboard",
       href: "/dashboard",
-      icon: <HomeIcon className="size-4" />,
+      icon: <HomeIcon className="h-4 w-4" />,
     },
     {
       title: "Repository",
       href: "/dashboard/repository",
-      icon: <Github className="size-4" />,
+      icon: <Github className="h-4 w-4" />,
     },
     {
       title: "Reviews",
       href: "/dashboard/reviews",
-      icon: <MessageCircle className="size-4" />,
+      icon: <MessageCircle className="h-4 w-4" />,
     },
     {
       title: "Subscriptions",
       href: "/dashboard/subscriptions",
-      icon: <CreditCardIcon className="size-4" />,
+      icon: <CreditCardIcon className="h-4 w-4" />,
     },
     {
       title: "Settings",
       href: "/dashboard/settings",
-      icon: <SettingsIcon className="size-4" />,
+      icon: <SettingsIcon className="h-4 w-4" />,
     },
   ];
 
-  const isActive = (href: string) => {
-    return pathName === href || pathName.startsWith(href + "/");
-  };
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   const cycleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
-    } else {
-      setTheme("light");
-    }
+    setTheme(
+      theme === "light" ? "dark" : theme === "dark" ? "system" : "light"
+    );
   };
 
-  const getThemeIcon = () => {
-    if (theme === "light") return <Sun className="size-4" />;
-    if (theme === "dark") return <Moon className="size-4" />;
-    return <Sun className="size-4" />;
-  };
-
-  if (!mounted || !session) return null;
+  const themeIcon =
+    theme === "dark" ? (
+      <Moon className="h-4 w-4" />
+    ) : (
+      <Sun className="h-4 w-4" />
+    );
 
   const user = session.user;
-  const userName = user.name;
-  const userEmail = user.email;
-  const userInitial = userName
-    ?.split(" ")
-    .map((name: string) => name[0])
-    .join("")
-    .toUpperCase();
-  const userImage = user.image;
+  const initials =
+    user.name
+      ?.split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .toUpperCase() ?? "";
 
   return (
-    <Sidebar className="bg-background border-r border-border">
-      <SidebarHeader className="border-b border-border">
-        <div className="flex items-center gap-4 px-2 py-6">
-          <div className="flex items-center justify-center size-12 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground text-sm font-medium shadow-sm">
-            <GithubIcon className="size-6" />
+    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+      <SidebarHeader className="px-3 py-4">
+        <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+            <GithubIcon className="h-5 w-5" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground">Code Hawk</p>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold">Code Hawk</p>
             <p className="text-xs text-muted-foreground">
               Code Review Assistant
             </p>
@@ -124,19 +117,30 @@ export const AppSidebar = () => {
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="px-2 py-2">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.href)}
-                    tooltip={item.title}
-                    className="hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
+                    className="h-9 rounded-md px-3
+                  text-sm font-medium
+                  transition-colors
+                  hover:bg-sidebar-accent
+                  hover:text-sidebar-foreground 
+                  data-[active=true]:bg-sidebar-accent
+                  data-[active=true]:text-white"
                   >
-                    <a href={item.href}>
+                    <a
+                      href={item.href}
+                      className="relative flex items-center gap-3"
+                    >
+                      {isActive(item.href) && (
+                        <span className="absolute left-[-12px] h-4 w-1 rounded-r bg-primary" />
+                      )}
                       {item.icon}
                       <span>{item.title}</span>
                     </a>
@@ -148,57 +152,61 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border">
+      <SidebarFooter className="px-3 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="hover:bg-accent hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+                  className="
+                    rounded-lg
+                    hover:bg-sidebar-accent
+                    data-[state=open]:bg-sidebar-accent
+                  "
                 >
-                  <Avatar className="h-8 w-8 rounded-lg ring-2 ring-border">
-                    <AvatarImage src={userImage || undefined} alt={userName} />
-                    <AvatarFallback className="rounded-lg bg-accent text-accent-foreground">
-                      {userInitial}
-                    </AvatarFallback>
+                  <Avatar className="h-8 w-8 rounded-md">
+                    <AvatarImage src={user.image || undefined} />
+                    <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold text-foreground">
-                      {userName}
-                    </span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {userEmail}
+
+                  <div className="ml-2 flex flex-col text-left text-sm leading-tight">
+                    <span className="font-medium">{user.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {user.email}
                     </span>
                   </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg border-border bg-card text-card-foreground shadow-lg"
                 side="bottom"
                 align="end"
-                sideOffset={4}
+                sideOffset={6}
+                className="w-56 rounded-lg"
               >
-                <DropdownMenuItem
-                  onClick={cycleTheme}
-                  className="hover:bg-accent hover:text-accent-foreground cursor-pointer"
-                >
-                  {getThemeIcon()}
-                  <span>Toggle theme</span>
+                <DropdownMenuItem onClick={cycleTheme}>
+                  {themeIcon}
+                  <span className="ml-2">Toggle theme</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
-                  <User className="size-4" />
-                  <span>Account</span>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem>
+                  <User className="h-4 w-4" />
+                  <span className="ml-2">Account</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
-                  <SettingsIcon className="size-4" />
-                  <span>Settings</span>
+
+                <DropdownMenuItem>
+                  <SettingsIcon className="h-4 w-4" />
+                  <span className="ml-2">Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="hover:bg-destructive/10 hover:text-destructive cursor-pointer">
-                  <Logout className="flex items-center gap-2 cursor-pointer w-full">
-                    <LogOut className="size-4" />
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <Logout className="flex w-full items-center gap-2">
+                    <LogOut className="h-4 w-4" />
                     <span>Log out</span>
                   </Logout>
                 </DropdownMenuItem>
