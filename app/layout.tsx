@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-providers";
+import { QueryProviders } from "@/components/providers/query-providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Code Hawk Team" }],
   creator: "Code Hawk",
-  metadataBase: new URL("https://codehawk.dev"), // change when live
+  // metadataBase: new URL("https://codehawk.dev"),
   openGraph: {
     title: "Code Hawk · AI Code Review Assistant",
     description:
@@ -59,14 +60,16 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <QueryProviders>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </QueryProviders>
       </body>
     </html>
   );
