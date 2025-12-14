@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import { requireAuth } from "@/module/auth/utils/auth-utils";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -6,7 +7,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  await requireAuth();
+
   return (
     <SidebarProvider>
       <AppSidebar />
