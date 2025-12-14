@@ -37,16 +37,16 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 selection:bg-violet-500/30">
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-slate-950 flex-col justify-between p-12 text-white">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+    <div className="min-h-screen w-full flex bg-background selection:bg-primary/30">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-card flex-col justify-between p-12 text-card-foreground">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-violet-500/20 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-12">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-500/20">
-              <Eye className="h-6 w-6 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 shadow-lg shadow-primary/20">
+              <Eye className="h-6 w-6 text-primary-foreground" />
             </div>
             <span className="text-xl font-bold tracking-tight">CodeHawk</span>
           </div>
@@ -64,40 +64,42 @@ const LoginForm = () => {
 
           <div className="space-y-6">
             <div className="flex items-start gap-4 group">
-              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-800 bg-slate-900/50 text-violet-400 transition-colors group-hover:border-violet-500/50 group-hover:bg-violet-500/10">
+              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary transition-colors group-hover:border-primary/50 group-hover:bg-primary/10">
                 <GitPullRequest className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="font-medium text-slate-200">
+                <h3 className="font-medium text-card-foreground">
                   Instant PR Analysis
                 </h3>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Automated reviews the moment you push code.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 group">
-              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-800 bg-slate-900/50 text-blue-400 transition-colors group-hover:border-blue-500/50 group-hover:bg-blue-500/10">
+              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/50 text-blue-400 transition-colors group-hover:border-blue-500/50 group-hover:bg-blue-500/10">
                 <Star className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="font-medium text-slate-200">
+                <h3 className="font-medium text-card-foreground">
                   Smart Suggestions
                 </h3>
-                <p className="text-sm text-slate-500 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   Context-aware refactoring and security tips.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 group">
-              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-800 bg-slate-900/50 text-emerald-400 transition-colors group-hover:border-emerald-500/50 group-hover:bg-emerald-500/10">
+              <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/50 text-emerald-400 transition-colors group-hover:border-emerald-500/50 group-hover:bg-emerald-500/10">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
               <div>
-                <h3 className="font-medium text-slate-200">Production Ready</h3>
-                <p className="text-sm text-slate-500 mt-1">
+                <h3 className="font-medium text-card-foreground">
+                  Production Ready
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
                   Trusted by developers to ship cleaner code faster.
                 </p>
               </div>
@@ -105,12 +107,12 @@ const LoginForm = () => {
           </div>
         </div>
 
-        <div className="relative z-10 flex items-center gap-4 text-sm text-slate-500">
+        <div className="relative z-10 flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex -space-x-2">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-8 w-8 rounded-full border-2 border-slate-950 bg-slate-800"
+                className="h-8 w-8 rounded-full border-2 border-card bg-muted"
               />
             ))}
           </div>
@@ -119,29 +121,27 @@ const LoginForm = () => {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] opacity-50 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(var(--muted)_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 pointer-events-none" />
 
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-200/20 dark:bg-violet-900/10 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="w-full max-w-[400px] relative z-10 space-y-8">
           <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white shadow-lg shadow-violet-600/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
               <Eye className="h-6 w-6" />
             </div>
-            <span className="text-2xl font-bold text-slate-900 dark:text-white">
-              CodeHawk
-            </span>
+            <span className="text-2xl font-bold text-foreground">CodeHawk</span>
           </div>
 
-          <Card className="border border-slate-200/60 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-2xl shadow-slate-200/50 dark:shadow-none">
+          <Card className="border border-border/40 bg-card/80 backdrop-blur-xl shadow-xl">
             <CardHeader className="space-y-1 pb-6 text-center pt-8">
-              <div className="mx-auto w-12 h-12 bg-slate-100 dark:bg-slate-900 rounded-2xl flex items-center justify-center mb-4 border border-slate-200 dark:border-slate-800">
-                <Command className="w-6 h-6 text-slate-600 dark:text-slate-400" />
+              <div className="mx-auto w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mb-4 border border-border">
+                <Command className="w-6 h-6 text-muted-foreground" />
               </div>
-              <CardTitle className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <CardTitle className="text-2xl font-bold tracking-tight text-card-foreground">
                 Welcome back
               </CardTitle>
-              <CardDescription className="text-base text-slate-500 dark:text-slate-400">
+              <CardDescription className="text-base text-muted-foreground">
                 Login to access your dashboard
               </CardDescription>
             </CardHeader>
@@ -149,11 +149,11 @@ const LoginForm = () => {
               <Button
                 onClick={handleGithubLogin}
                 disabled={isGithubLoading}
-                className="w-full h-12 bg-[#24292F] hover:bg-[#24292F]/90 text-white transition-all duration-300 relative overflow-hidden group shadow-lg shadow-slate-900/10 ring-1 ring-inset ring-white/10"
+                className="w-full h-12 bg-foreground hover:bg-foreground/90 text-background transition-all duration-300 relative overflow-hidden group shadow-lg ring-1 ring-inset ring-border/20"
               >
                 {isGithubLoading ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-background/30 border-t-background" />
                     <span>Connecting...</span>
                   </div>
                 ) : (
@@ -163,15 +163,15 @@ const LoginForm = () => {
                     <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 ml-auto" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
               </Button>
 
               <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-slate-200 dark:border-slate-800" />
+                  <span className="w-full border-t border-border" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white/80 dark:bg-slate-950/80 px-3 text-slate-400 backdrop-blur-sm">
+                  <span className="bg-card/80 px-3 text-muted-foreground backdrop-blur-sm">
                     Protected by CodeHawk
                   </span>
                 </div>
@@ -179,18 +179,18 @@ const LoginForm = () => {
             </CardContent>
           </Card>
 
-          <p className="text-center text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <a
               href="#"
-              className="font-medium text-slate-900 dark:text-slate-200 hover:underline underline-offset-4 transition-colors"
+              className="font-medium text-foreground hover:underline underline-offset-4 transition-colors"
             >
               Terms of Service
             </a>{" "}
             and{" "}
             <a
               href="#"
-              className="font-medium text-slate-900 dark:text-slate-200 hover:underline underline-offset-4 transition-colors"
+              className="font-medium text-foreground hover:underline underline-offset-4 transition-colors"
             >
               Privacy Policy
             </a>
