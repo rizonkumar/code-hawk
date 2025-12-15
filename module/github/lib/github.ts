@@ -2,15 +2,18 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/db";
 import { Octokit } from "octokit";
-import { ContributionData } from "../types/contributionData";
+import {
+  ContributionData,
+  ContributionCalendar,
+} from "../types/contributionData";
 
-export const getGithubToken = async () => {
+export const getAuthenticatedGithubClient = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
-    return new Error("You must be logged in to access this resource");
+  if (!session?.user) {
+    throw new Error("You must be logged in to access this resource");
   }
 
   const account = await prisma.account.findFirst({
@@ -24,39 +27,63 @@ export const getGithubToken = async () => {
     throw new Error("No github access token found");
   }
 
-  return account.accessToken;
+  const octokit = new Octokit({ auth: account.accessToken });
+  const { data: user } = await octokit.rest.users.getAuthenticated();
+
+  return { octokit, user, token: account.accessToken };
+};
+
+export const getGithubToken = async () => {
+  try {
+    const { token } = await getAuthenticatedGithubClient();
+    return token;
+  } catch (error) {
+    return error as Error;
+  }
 };
 
 export const fetchUserContributions = async (
   octokit: Octokit,
-  username: string
-) => {
+  username: string,
+  from?: string,
+  to?: string
+): Promise<ContributionCalendar | ContributionCalendar[] | undefined> => {
+  const hasDateRange = from && to;
   const query = `
-  query($username: String!) {
-    user(login: $username) {
-      contributionsCollection {
-        contributionCalendar {
-          totalContributions
-          weeks {
-            contributionDays {
-              contributionCount
-              date
-              color
+    query(${
+      hasDateRange
+        ? "$username: String!, $from: DateTime, $to: DateTime"
+        : "$username: String!"
+    }) {
+      user(login: $username) {
+        contributionsCollection${hasDateRange ? "(from: $from, to: $to)" : ""} {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                contributionCount
+                date
+                color
+              }
             }
           }
         }
       }
     }
-  }
   `;
 
   try {
-    const response = await octokit.graphql<ContributionData>(query, {
-      username,
-    });
-    return response.user.contributionsCollection?.contributionCalendar;
+    const variables = hasDateRange ? { username, from, to } : { username };
+    const response = await octokit.graphql<ContributionData>(query, variables);
+    const result = response.user?.contributionsCollection?.contributionCalendar;
+
+    if (!result || (Array.isArray(result) && result.length === 0)) {
+      throw new Error("No contribution calendar data found in response");
+    }
+
+    return result;
   } catch (error) {
-    console.error("Error fetching user contributions:", error as Error);
+    console.error("Error fetching user contributions:", error);
     throw new Error("Failed to fetch user contributions");
   }
 };
