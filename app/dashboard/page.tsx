@@ -10,8 +10,8 @@ import {
 import {
   GitBranch,
   GitCommit,
-  MessageSquare,
   GitPullRequest,
+  MessageSquare,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -20,25 +20,6 @@ import {
 } from "@/module/dashboard/actions";
 import ContributionGraph from "@/module/dashboard/components/contribution-graph";
 import { StatCard } from "@/module/dashboard/components/stat-card";
-
-const fetchDashboardStatus = async (): Promise<DashboardStats> => {
-  const result = await getDashboardStatus();
-  if (result instanceof Error) {
-    throw result;
-  }
-  return result;
-};
-
-const fetchContributionGraphData = async (): Promise<{
-  totalContributions: number;
-  contributions: { date: string; count: number; level: number }[];
-}> => {
-  const result = await getContributionGraphData();
-  if (result instanceof Error) {
-    throw result;
-  }
-  return result;
-};
 
 interface DashboardStats {
   totalRepositories: number;
@@ -54,7 +35,11 @@ const MainPage = () => {
     error,
   } = useQuery<DashboardStats>({
     queryKey: ["dashboard-stats"],
-    queryFn: fetchDashboardStatus,
+    queryFn: async () => {
+      const res = await getDashboardStatus();
+      if (res instanceof Error) throw res;
+      return res;
+    },
     refetchOnWindowFocus: false,
   });
 
@@ -64,7 +49,11 @@ const MainPage = () => {
     error: contributionError,
   } = useQuery({
     queryKey: ["contribution-graph"],
-    queryFn: fetchContributionGraphData,
+    queryFn: async () => {
+      const res = await getContributionGraphData();
+      if (res instanceof Error) throw res;
+      return res;
+    },
     refetchOnWindowFocus: false,
   });
 
@@ -78,7 +67,6 @@ const MainPage = () => {
 
   return (
     <div className="space-y-8">
-      {/* ================= Header ================= */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
@@ -86,8 +74,7 @@ const MainPage = () => {
         </p>
       </div>
 
-      {/* ================= Stats ================= */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title="Repositories"
           value={stats?.totalRepositories ?? 0}
@@ -95,7 +82,6 @@ const MainPage = () => {
           icon={GitBranch}
           isLoading={isLoading}
         />
-
         <StatCard
           title="Commits"
           value={stats?.totalCommits ?? 0}
@@ -103,7 +89,6 @@ const MainPage = () => {
           icon={GitCommit}
           isLoading={isLoading}
         />
-
         <StatCard
           title="Pull Requests"
           value={stats?.totalPullRequests ?? 0}
@@ -111,7 +96,6 @@ const MainPage = () => {
           icon={GitPullRequest}
           isLoading={isLoading}
         />
-
         <StatCard
           title="AI Reviews"
           value={stats?.totalReviews ?? 0}
@@ -121,15 +105,13 @@ const MainPage = () => {
         />
       </div>
 
-      {/* ================= Contribution Graph ================= */}
       <Card>
         <CardHeader>
           <CardTitle>Contribution Activity</CardTitle>
           <CardDescription>
-            Your GitHub contribution activity over the last 6 months
+            Your GitHub contribution activity for the current year
           </CardDescription>
         </CardHeader>
-
         <CardContent>
           <ContributionGraph
             data={contributionData}

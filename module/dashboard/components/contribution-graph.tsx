@@ -10,7 +10,7 @@ interface Contribution {
   level: number;
 }
 
-interface ContributionGraphProps {
+interface Props {
   data?: {
     totalContributions: number;
     contributions: Contribution[];
@@ -19,18 +19,14 @@ interface ContributionGraphProps {
   error?: unknown;
 }
 
-const ContributionGraph = ({
-  data,
-  isLoading,
-  error,
-}: ContributionGraphProps) => {
+const ContributionGraph = ({ data, isLoading, error }: Props) => {
   const { theme } = useTheme();
 
   if (isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-4 w-40" />
-        <Skeleton className="h-[140px] w-full" />
+        <Skeleton className="h-[120px] w-full sm:h-[150px]" />
       </div>
     );
   }
@@ -38,35 +34,29 @@ const ContributionGraph = ({
   if (error || !data) {
     return (
       <p className="text-sm text-muted-foreground">
-        Unable to load contribution data.
-      </p>
-    );
-  }
-
-  if (data.contributions.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        No contribution data available.
+        Unable to load contribution activity.
       </p>
     );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-sm text-muted-foreground">
           Total contributions
         </span>
-        <span className="text-sm font-medium">{data.totalContributions}</span>
+        <span className="text-sm font-medium">
+          {data.totalContributions.toLocaleString()}
+        </span>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="relative -mx-2 overflow-x-auto px-2">
         <ActivityCalendar
           data={data.contributions}
-          blockSize={14}
+          blockSize={12}
           blockRadius={3}
           fontSize={12}
-          showWeekdayLabels
+          showWeekdayLabels={false}
           showMonthLabels
           colorScheme={theme === "dark" ? "dark" : "light"}
           theme={{
@@ -75,6 +65,10 @@ const ContributionGraph = ({
           }}
         />
       </div>
+
+      <p className="text-xs text-muted-foreground sm:hidden">
+        Scroll horizontally to view full activity
+      </p>
     </div>
   );
 };
