@@ -33,6 +33,39 @@ const getAuthenticatedGithubClient = async () => {
   }
 };
 
+export const getContributionGraphData = async () => {
+  try {
+    const authResult = await getAuthenticatedGithubClient();
+    if (authResult instanceof Error) {
+      return authResult;
+    }
+
+    const { octokit, user } = authResult;
+
+    const fromDate = "2008-01-01T00:00:00Z";
+    const toDate = new Date().toISOString();
+    const calendar = await fetchUserContributions(
+      octokit,
+      user.login,
+      fromDate,
+      toDate
+    );
+    const contributions = calendar[0].weeks.flatMap((week) =>
+      week.contributionDays.map((day) => ({
+        date: day.date,
+        count: day.contributionCount,
+        level: Math.min(4, Math.floor(day.contributionCount / 3)),
+      }))
+    );
+    return {
+      contributions,
+      totalContributions: calendar[0].totalContributions,
+    };
+  } catch (error) {
+    console.error("Error fetching contribution data:", error as Error);
+    return new Error("Failed to fetch contribution data");
+  }
+};
 export const getDashboardStatus = async () => {
   try {
     const authResult = await getAuthenticatedGithubClient();
@@ -44,8 +77,12 @@ export const getDashboardStatus = async () => {
 
     // TODO: Fetch total connected repositories from DB;
     const totalRepositories = 30;
-    const calendar = await fetchUserContributions(octokit, user.login);
-    const totalCommits = calendar?.[0]?.totalContributions || 0;
+
+    const { data: commits } = await octokit.rest.search.commits({
+      q: `author:${user.login}`,
+      per_page: 1,
+    });
+    const totalCommits = commits.total_count || 0;
     const { data: pullRequests } =
       await octokit.rest.search.issuesAndPullRequests({
         q: `author:${user.login} type:pr`,

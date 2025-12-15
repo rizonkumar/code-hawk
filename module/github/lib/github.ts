@@ -29,12 +29,14 @@ export const getGithubToken = async () => {
 
 export const fetchUserContributions = async (
   octokit: Octokit,
-  username: string
+  username: string,
+  from?: string,
+  to?: string
 ) => {
   const query = `
-  query($username: String!) {
+  query($username: String!, $from: DateTime, $to: DateTime) {
     user(login: $username) {
-      contributionsCollection {
+      contributionsCollection(from: $from, to: $to) {
         contributionCalendar {
           totalContributions
           weeks {
@@ -53,6 +55,8 @@ export const fetchUserContributions = async (
   try {
     const response = await octokit.graphql<ContributionData>(query, {
       username,
+      from,
+      to,
     });
     return response.user.contributionsCollection?.contributionCalendar;
   } catch (error) {
