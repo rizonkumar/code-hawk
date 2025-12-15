@@ -28,12 +28,9 @@ export const getGithubToken = async () => {
 };
 
 export const fetchUserContributions = async (
-  token: string,
+  octokit: Octokit,
   username: string
 ) => {
-  const octokit = new Octokit({
-    auth: token,
-  });
   const query = `
   query($username: String!) {
     user(login: $username) {
