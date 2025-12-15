@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { useTheme } from "next-themes";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   CreditCardIcon,
   Github,
@@ -42,6 +43,8 @@ export const AppSidebar = () => {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
 
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+
   if (!session) return null;
 
   const navItems = [
@@ -68,21 +71,30 @@ export const AppSidebar = () => {
       .toUpperCase() ?? "";
 
   return (
-    <Sidebar className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+    <Sidebar
+      className={`border-r border-sidebar-border bg-sidebar text-sidebar-foreground ${
+        isTablet ? "w-[72px]" : "w-[260px]"
+      }`}
+    >
+      {/* ================= Header ================= */}
       <SidebarHeader className="px-3 py-4">
         <div className="flex items-center gap-3 rounded-md px-2 py-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GithubIcon className="h-5 w-5" />
           </div>
-          <div className="leading-tight">
-            <p className="text-sm font-semibold">Code Hawk</p>
-            <p className="text-xs text-muted-foreground">
-              Code Review Assistant
-            </p>
-          </div>
+
+          {!isTablet && (
+            <div className="leading-tight">
+              <p className="text-sm font-semibold">Code Hawk</p>
+              <p className="text-xs text-muted-foreground">
+                Code Review Assistant
+              </p>
+            </div>
+          )}
         </div>
       </SidebarHeader>
 
+      {/* ================= Navigation ================= */}
       <SidebarContent className="px-2 py-2">
         <SidebarGroup>
           <SidebarGroupContent>
@@ -95,16 +107,22 @@ export const AppSidebar = () => {
                     <SidebarMenuButton
                       asChild
                       isActive={active}
+                      tooltip={isTablet ? title : undefined}
                       className="
                         relative h-9 rounded-md px-3
-                        text-sm font-medium
                         transition-colors
                         hover:bg-sidebar-accent
                         data-[active=true]:bg-sidebar-accent
+                        justify-center lg:justify-start
                       "
                     >
-                      <a href={href} className="flex items-center gap-3">
-                        {active && (
+                      <a
+                        href={href}
+                        className={`flex items-center ${
+                          isTablet ? "justify-center" : "gap-3"
+                        }`}
+                      >
+                        {active && !isTablet && (
                           <span className="absolute left-[-10px] h-4 w-1 rounded-r bg-primary" />
                         )}
                         <Icon
@@ -112,7 +130,7 @@ export const AppSidebar = () => {
                             active ? "text-primary" : "text-muted-foreground"
                           }`}
                         />
-                        <span>{title}</span>
+                        {!isTablet && <span>{title}</span>}
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -123,16 +141,24 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
+      {/* ================= Footer ================= */}
       <SidebarFooter className="px-3 py-3 space-y-2">
-        <div className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-sidebar-accent">
-          <div className="flex items-center gap-2 text-sm">
-            {theme === "dark" ? (
-              <Moon className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <Sun className="h-4 w-4 text-muted-foreground" />
-            )}
-            <span>Dark mode</span>
-          </div>
+        {/* Theme toggle */}
+        <div
+          className={`flex items-center rounded-lg px-3 py-2 hover:bg-sidebar-accent ${
+            isTablet ? "justify-center" : "justify-between"
+          }`}
+        >
+          {!isTablet && (
+            <div className="flex items-center gap-2 text-sm">
+              {theme === "dark" ? (
+                <Moon className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <Sun className="h-4 w-4 text-muted-foreground" />
+              )}
+              <span>Dark mode</span>
+            </div>
+          )}
 
           <Switch
             checked={theme === "dark"}
@@ -140,25 +166,30 @@ export const AppSidebar = () => {
           />
         </div>
 
+        {/* User menu */}
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="rounded-lg hover:bg-sidebar-accent"
+                  className={`rounded-lg hover:bg-sidebar-accent ${
+                    isTablet ? "justify-center" : ""
+                  }`}
                 >
                   <Avatar className="h-8 w-8 rounded-md">
                     <AvatarImage src={user.image || undefined} />
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
 
-                  <div className="ml-2 flex flex-col text-left text-sm leading-tight">
-                    <span className="font-medium">{user.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {user.email}
-                    </span>
-                  </div>
+                  {!isTablet && (
+                    <div className="ml-2 flex flex-col text-left text-sm leading-tight">
+                      <span className="font-medium">{user.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {user.email}
+                      </span>
+                    </div>
+                  )}
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
 
