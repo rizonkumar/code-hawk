@@ -11,10 +11,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
+import { useTheme } from "next-themes";
 import {
   CreditCardIcon,
   Github,
@@ -38,60 +38,26 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Logout from "@/module/auth/components/logout";
 
 export const AppSidebar = () => {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  if (!session) return null;
 
-  if (!mounted || !session) return null;
-
-  const navigationItems = [
-    {
-      title: "Dashboard",
-      href: "/dashboard",
-      icon: <HomeIcon className="h-4 w-4" />,
-    },
-    {
-      title: "Repository",
-      href: "/dashboard/repository",
-      icon: <Github className="h-4 w-4" />,
-    },
-    {
-      title: "Reviews",
-      href: "/dashboard/reviews",
-      icon: <MessageCircle className="h-4 w-4" />,
-    },
+  const navItems = [
+    { title: "Dashboard", href: "/dashboard", icon: HomeIcon },
+    { title: "Repository", href: "/dashboard/repository", icon: Github },
+    { title: "Reviews", href: "/dashboard/reviews", icon: MessageCircle },
     {
       title: "Subscriptions",
       href: "/dashboard/subscriptions",
-      icon: <CreditCardIcon className="h-4 w-4" />,
+      icon: CreditCardIcon,
     },
-    {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: <SettingsIcon className="h-4 w-4" />,
-    },
+    { title: "Settings", href: "/dashboard/settings", icon: SettingsIcon },
   ];
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
-
-  const cycleTheme = () => {
-    setTheme(
-      theme === "light" ? "dark" : theme === "dark" ? "system" : "light"
-    );
-  };
-
-  const themeIcon =
-    theme === "dark" ? (
-      <Moon className="h-4 w-4" />
-    ) : (
-      <Sun className="h-4 w-4" />
-    );
 
   const user = session.user;
   const initials =
@@ -102,10 +68,10 @@ export const AppSidebar = () => {
       .toUpperCase() ?? "";
 
   return (
-    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+    <Sidebar className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       <SidebarHeader className="px-3 py-4">
-        <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+        <div className="flex items-center gap-3 rounded-md px-2 py-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GithubIcon className="h-5 w-5" />
           </div>
           <div className="leading-tight">
@@ -121,49 +87,66 @@ export const AppSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.href)}
-                    className="h-9 rounded-md px-3
-                  text-sm font-medium
-                  transition-colors
-                  hover:bg-sidebar-accent
-                  hover:text-sidebar-foreground 
-                  data-[active=true]:bg-sidebar-accent
-                  data-[active=true]:text-white"
-                  >
-                    <a
-                      href={item.href}
-                      className="relative flex items-center gap-3"
+              {navItems.map(({ title, href, icon: Icon }) => {
+                const active = isActive(href);
+
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      className="
+                        relative h-9 rounded-md px-3
+                        text-sm font-medium
+                        transition-colors
+                        hover:bg-sidebar-accent
+                        data-[active=true]:bg-sidebar-accent
+                      "
                     >
-                      {isActive(item.href) && (
-                        <span className="absolute left-[-12px] h-4 w-1 rounded-r bg-primary" />
-                      )}
-                      {item.icon}
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                      <a href={href} className="flex items-center gap-3">
+                        {active && (
+                          <span className="absolute left-[-10px] h-4 w-1 rounded-r bg-primary" />
+                        )}
+                        <Icon
+                          className={`h-4 w-4 ${
+                            active ? "text-primary" : "text-muted-foreground"
+                          }`}
+                        />
+                        <span>{title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="px-3 py-3">
+      <SidebarFooter className="px-3 py-3 space-y-2">
+        <div className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-sidebar-accent">
+          <div className="flex items-center gap-2 text-sm">
+            {theme === "dark" ? (
+              <Moon className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <Sun className="h-4 w-4 text-muted-foreground" />
+            )}
+            <span>Dark mode</span>
+          </div>
+
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+          />
+        </div>
+
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="
-                    rounded-lg
-                    hover:bg-sidebar-accent
-                    data-[state=open]:bg-sidebar-accent
-                  "
+                  className="rounded-lg hover:bg-sidebar-accent"
                 >
                   <Avatar className="h-8 w-8 rounded-md">
                     <AvatarImage src={user.image || undefined} />
@@ -179,27 +162,10 @@ export const AppSidebar = () => {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                side="bottom"
-                align="end"
-                sideOffset={6}
-                className="w-56 rounded-lg"
-              >
-                <DropdownMenuItem onClick={cycleTheme}>
-                  {themeIcon}
-                  <span className="ml-2">Toggle theme</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
+              <DropdownMenuContent align="end" sideOffset={6} className="w-56">
                 <DropdownMenuItem>
                   <User className="h-4 w-4" />
                   <span className="ml-2">Account</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem>
-                  <SettingsIcon className="h-4 w-4" />
-                  <span className="ml-2">Settings</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
