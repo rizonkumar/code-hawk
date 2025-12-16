@@ -87,3 +87,18 @@ export const fetchUserContributions = async (
     throw new Error("Failed to fetch user contributions");
   }
 };
+
+export const getUserRepositories = async (
+  page: number = 1,
+  perPage: number = 10
+) => {
+  const { octokit } = await getAuthenticatedGithubClient();
+  const { data } = await octokit.rest.repos.listForAuthenticatedUser({
+    sort: "updated",
+    direction: "desc",
+    visibility: "all",
+    per_page: perPage,
+    page: page,
+  });
+  return data;
+};
