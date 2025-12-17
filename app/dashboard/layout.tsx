@@ -14,14 +14,14 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <AppSidebar />
 
-      <SidebarInset className="flex min-h-screen flex-col bg-muted/30">
-        <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur">
+      <SidebarInset className="flex min-h-screen min-w-0 flex-col overflow-hidden bg-muted/30">
+        <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
           <h1 className="text-lg font-semibold tracking-tight">Dashboard</h1>
         </header>
 
-        <main className="flex-1">
+        <main className="flex-1 overflow-auto">
           <div className="mx-auto max-w-7xl p-4 md:p-6">
             <div className="rounded-xl bg-background p-4 shadow-sm md:p-6">
               {children}
