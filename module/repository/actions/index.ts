@@ -43,7 +43,9 @@ export const fetchUserRepositories = async (
 export const connectRepository = async (
   owner: string,
   repo: string,
-  githubId: number
+  githubId: number,
+  description?: string,
+  language?: string
 ) => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -66,6 +68,8 @@ export const connectRepository = async (
           fullName: `${owner}/${repo}`,
           userId: session.user.id,
           url: `https://github.com/${owner}/${repo}`,
+          description: description || null,
+          language: language || null,
         },
       });
     }

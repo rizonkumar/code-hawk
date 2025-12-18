@@ -2,18 +2,22 @@
 
 import { ProfileForm } from "@/module/settings/components/profile-form";
 import { Separator } from "@/components/ui/separator";
+import { RespositoryList } from "@/module/settings/components/repository-list";
 
 const SettingPage = () => {
   return (
     <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+      <div className="space-y-0.5">
+        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
         <p className="text-muted-foreground">
-          Manage your account settings and preferences.
+          Manage your account settings and connected repositories.
         </p>
       </div>
       <Separator />
-      <ProfileForm />
+      <div className="space-y-10">
+        <ProfileForm />
+        <RespositoryList />
+      </div>
     </div>
   );
 };

@@ -11,12 +11,22 @@ export const useConnectRepository = () => {
       owner,
       repo,
       githubId,
+      description,
+      language,
     }: {
       owner: string;
       repo: string;
       githubId: number;
+      description?: string;
+      language?: string;
     }) => {
-      return await connectRepository(owner, repo, githubId);
+      return await connectRepository(
+        owner,
+        repo,
+        githubId,
+        description,
+        language
+      );
     },
     onSuccess: () => {
       toast.success("Repository connected successfully");
