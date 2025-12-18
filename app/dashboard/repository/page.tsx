@@ -21,19 +21,27 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { useRepositories } from "@/module/repository/hooks/use-repository";
-import { ExternalLink, GitBranch, Search, Star, Loader2 } from "lucide-react";
+import {
+  ExternalLink,
+  GitBranch,
+  Search,
+  Star,
+  Loader2,
+  Check,
+} from "lucide-react";
 import { useState } from "react";
 import { motion } from "motion/react";
+import { useConnectRepository } from "@/module/repository/hooks/use-connect-repository";
 
 interface Repository {
-  id: string;
+  id: number;
   name: string;
-  fullName: string;
-  description: string;
+  full_name: string;
+  description: string | null;
   html_url: string;
   stargazers_count: number;
   language: string | null;
-  topics: string[];
+  topics?: string[];
   isConnected?: boolean;
 }
 
@@ -46,6 +54,9 @@ const RepositoryPage = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useRepositories();
+
+  const { mutate: connectRepo } = useConnectRepository();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [localConnectingId, setLocalConnectingId] = useState<number | null>(
     null
@@ -60,6 +71,16 @@ const RepositoryPage = () => {
 
   const handleConnect = (repo: Repository) => {
     setLocalConnectingId(Number(repo.id));
+    connectRepo(
+      {
+        owner: repo.full_name.split("/")[0],
+        repo: repo.name,
+        githubId: Number(repo.id),
+      },
+      {
+        onSettled: () => setLocalConnectingId(null),
+      }
+    );
   };
 
   if (error) {
@@ -98,7 +119,10 @@ const RepositoryPage = () => {
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <Card key={i} className="flex flex-col justify-between">
+            <Card
+              key={i}
+              className="flex min-w-0 flex-col justify-between overflow-hidden"
+            >
               <CardHeader>
                 <div className="flex justify-between gap-2">
                   <Skeleton className="h-6 w-2/3" />
@@ -142,8 +166,9 @@ const RepositoryPage = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2 }}
                 key={repo.id}
+                className="min-w-0"
               >
-                <Card className="flex h-full flex-col hover:border-sidebar-ring/50 transition-colors">
+                <Card className="flex h-full min-w-0 flex-col overflow-hidden hover:border-sidebar-ring/50 transition-colors">
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1 truncate">
@@ -202,6 +227,11 @@ const RepositoryPage = () => {
                           repo.isConnected
                         }
                         variant={repo.isConnected ? "outline" : "default"}
+                        className={
+                          repo.isConnected
+                            ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 dark:text-emerald-400"
+                            : ""
+                        }
                       >
                         {localConnectingId === Number(repo.id) ? (
                           <>
@@ -209,7 +239,10 @@ const RepositoryPage = () => {
                             Connecting
                           </>
                         ) : repo.isConnected ? (
-                          "Connected"
+                          <>
+                            <Check className="mr-1 size-3" />
+                            Connected
+                          </>
                         ) : (
                           "Connect"
                         )}
