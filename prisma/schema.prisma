@@ -79,6 +79,8 @@ model Repository {
   owner     String
   fullName  String
   url       String
+  description String?
+  language    String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 

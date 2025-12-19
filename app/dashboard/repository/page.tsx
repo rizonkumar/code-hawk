@@ -76,6 +76,8 @@ const RepositoryPage = () => {
         owner: repo.full_name.split("/")[0],
         repo: repo.name,
         githubId: Number(repo.id),
+        description: repo.description || undefined,
+        language: repo.language || undefined,
       },
       {
         onSettled: () => setLocalConnectingId(null),
