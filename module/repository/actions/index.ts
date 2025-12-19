@@ -8,6 +8,7 @@ import {
 } from "@/module/github/lib/github";
 import { headers } from "next/headers";
 import { randomUUID } from "crypto";
+import { inngest } from "@/inngest/client";
 
 export const fetchUserRepositories = async (
   page: number = 1,
@@ -73,13 +74,22 @@ export const connectRepository = async (
         },
       });
     }
+
+    try {
+      await inngest.send({
+        name: "repository.connected",
+        data: {
+          owner,
+          repo,
+          userId: session.user.id,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to send inngest event:", error);
+    }
     return webHook;
   } catch (error) {
     console.error("Error connecting repository:", error);
     throw new Error("Failed to connect repository. Please try again.");
   }
-
-  // TODO: Increment repository count for usage tracking
-
-  // TODO: TRIGGER REPOSITORY INDEXING FOR RAG (FIRE AND FORGET)
 };
