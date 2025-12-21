@@ -211,3 +211,31 @@ export const getRepoFileContents = async (
   }
   return files;
 };
+
+export const getPullRequestDiff = async (
+  token: string,
+  owner: string,
+  repo: string,
+  pullRequestNumber: number
+) => {
+  const octokit = new Octokit({ auth: token });
+  const { data: pr } = await octokit.rest.pulls.get({
+    owner,
+    repo,
+    pull_number: pullRequestNumber,
+  });
+  const { data: diff } = await octokit.rest.pulls.get({
+    owner,
+    repo,
+    pull_number: pullRequestNumber,
+    mediaType: {
+      format: "diff",
+    },
+  });
+
+  return {
+    diff: diff as unknown as string,
+    title: pr.title,
+    description: pr.body || "",
+  };
+};
