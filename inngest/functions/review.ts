@@ -143,7 +143,7 @@ End with a **short, creative poem** (4-6 lines) that captures the essence of the
 Format your entire response in clean, well-structured markdown.`;
 
       const { text } = await generateText({
-        model: google("gemini-3-flash"),
+        model: google("gemini-2.5-flash"),
         prompt,
       });
 

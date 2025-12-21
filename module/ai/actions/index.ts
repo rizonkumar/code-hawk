@@ -4,7 +4,6 @@ import { inngest } from "@/inngest/client";
 import prisma from "@/lib/db";
 import { getPullRequestDiff } from "@/module/github/lib/github";
 
-// ADD TRY AND CATCH
 export const reviewPullRequest = async (
   owner: string,
   repoName: string,
@@ -45,7 +44,6 @@ export const reviewPullRequest = async (
 
     const token = githubAccount.accessToken;
 
-    // Verify PR exists and get metadata (validates token works)
     await getPullRequestDiff(token, owner, repoName, pullRequestNumber);
 
     await inngest.send({
