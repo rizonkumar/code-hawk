@@ -239,3 +239,40 @@ export const getPullRequestDiff = async (
     description: pr.body || "",
   };
 };
+
+export const postReviewComment = async (
+  token: string,
+  owner: string,
+  repo: string,
+  pullRequestNumber: number,
+  review: string
+) => {
+  const octokit = new Octokit({ auth: token });
+
+  const body = `
+<div align="center">
+
+# 🦅 Code Hawk AI Review
+
+</div>
+
+${review}
+
+---
+
+<div align="center">
+
+**Powered by Code Hawk** • AI-Powered Code Reviews  
+<sub>🤖 This review was automatically generated. Always verify suggestions before implementing.</sub>
+
+</div>
+`;
+
+  const { data } = await octokit.rest.issues.createComment({
+    owner,
+    repo,
+    issue_number: pullRequestNumber,
+    body,
+  });
+  return data;
+};

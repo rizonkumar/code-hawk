@@ -49,7 +49,7 @@ export const reviewPullRequest = async (
     await getPullRequestDiff(token, owner, repoName, pullRequestNumber);
 
     await inngest.send({
-      name: "pr.review.request",
+      name: "pr.review.requested",
       data: {
         owner,
         repoName,
