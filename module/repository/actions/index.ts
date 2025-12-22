@@ -9,6 +9,10 @@ import {
 import { headers } from "next/headers";
 import { randomUUID } from "crypto";
 import { inngest } from "@/inngest/client";
+import {
+  canConnectRepository,
+  incrementRepositoryCount,
+} from "@/module/payment/lib/subscription";
 
 export const fetchUserRepositories = async (
   page: number = 1,
@@ -55,9 +59,15 @@ export const connectRepository = async (
     throw new Error("You must be logged in to access this resource");
   }
 
-  // TODO: CHECK IF USER CAN CONNECT MORE REPO, basically free user can only connect 5 repo
-
   try {
+    const canConnect = await canConnectRepository(session.user.id);
+
+    if (!canConnect) {
+      throw new Error(
+        "You have reached the limit of FREE version, please upgrade to PRO version"
+      );
+    }
+
     const webHook = await createWebHooks(owner, repo);
     if (webHook) {
       await prisma.repository.create({
@@ -73,19 +83,21 @@ export const connectRepository = async (
           language: language || null,
         },
       });
-    }
 
-    try {
-      await inngest.send({
-        name: "repository.connected",
-        data: {
-          owner,
-          repo,
-          userId: session.user.id,
-        },
-      });
-    } catch (error) {
-      console.error("Failed to send inngest event:", error);
+      await incrementRepositoryCount(session.user.id);
+
+      try {
+        await inngest.send({
+          name: "repository.connected",
+          data: {
+            owner,
+            repo,
+            userId: session.user.id,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to send inngest event:", error);
+      }
     }
     return webHook;
   } catch (error) {
