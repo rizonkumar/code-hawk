@@ -3,6 +3,10 @@
 import { inngest } from "@/inngest/client";
 import prisma from "@/lib/db";
 import { getPullRequestDiff } from "@/module/github/lib/github";
+import {
+  canCreateReview,
+  incrementReviewCount,
+} from "@/module/payment/lib/subscription";
 
 export const reviewPullRequest = async (
   owner: string,
@@ -34,6 +38,15 @@ export const reviewPullRequest = async (
       );
     }
 
+    const canReview = await canCreateReview(repository.userId, repository.id);
+
+    // TODO: we need toast error message
+    if (!canReview) {
+      throw new Error(
+        "You have reached the limit of reviews for this repository"
+      );
+    }
+
     const githubAccount = repository.user.accounts[0];
 
     if (!githubAccount?.accessToken) {
@@ -55,6 +68,8 @@ export const reviewPullRequest = async (
         userId: repository.userId,
       },
     });
+
+    await incrementReviewCount(repository.user.id, repository.id);
 
     return { success: true, message: "Review Queued" };
   } catch (error) {
